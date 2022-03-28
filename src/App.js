@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import NewExpense from './components/NewExpense/NewExpense';
+
+import Expenses from './components/Expenses/Expenses';
+
+
+let DUMMY_EXPENSE = [];
+
+const App = () => {
+    
+    const [expenses, setExpenses] = useState(DUMMY_EXPENSE);
+
+    function fetchData(){
+        fetch('').then(
+            response => {
+                return response.json();
+            }
+        ).then(
+            data => {
+                //console.log(data);
+                setExpenses(data);
+            }
+        );
+    }
+
+    useEffect(()=>{
+        fetchData();
+    },[]);
+
+    const addExpenseHandler = (expense) => {
+        fetch('', {
+            method: 'POST',
+            body: JSON.stringify(expense),
+            headers: {
+                'content-Type' : 'application/json'
+            }
+        }).then(
+            response => {
+                fetchData();
+            }
+        );
+    };
+
+    return (
+        <div>
+            <NewExpense onAddExpense={addExpenseHandler} />
+            <Expenses item={expenses} />
+        </div>    
+    );
 }
 
 export default App;
